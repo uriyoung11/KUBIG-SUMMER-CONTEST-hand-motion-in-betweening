@@ -1,9 +1,6 @@
-
-https://github.com/user-attachments/assets/a456bb3f-9c92-493b-9224-f3077c061964
-
 ## v1. SILK 베이스라인
 - 공식 코드 미존재
-- ### 논문 대비 우리가 그대로 따른 것
+### 논문 대비 우리가 그대로 따른 것
 - Transformer 인코더 **6층, 8-head**, `d_model=1024`, `d_ff=4096`, **Pre-LN**
 - **AdamW + Noam 학습률 스케줄러**, batch size **64**
 - 입력 구조: **C개 컨텍스트 프레임 + M개 빈(0) 프레임 + 목표 키프레임 1개**
