@@ -1,0 +1,27 @@
+
+https://github.com/user-attachments/assets/a456bb3f-9c92-493b-9224-f3077c061964
+
+## v1. SILK 베이스라인
+- 공식 코드 미존재
+- ### 논문 대비 우리가 그대로 따른 것
+- Transformer 인코더 **6층, 8-head**, `d_model=1024`, `d_ff=4096`, **Pre-LN**
+- **AdamW + Noam 학습률 스케줄러**, batch size **64**
+- 입력 구조: **C개 컨텍스트 프레임 + M개 빈(0) 프레임 + 목표 키프레임 1개**
+- 빈 프레임은 **0으로 채우고 attention masking 없음** (모든 프레임이 서로 attend)
+- **단일 L1 손실**
+- 학습 시 M(가림 길이)을 5~30 사이에서 균일 샘플링, 평가는 5/15/30/45 고정
+- 데이터 슬라이스 오프셋 5 (논문 대비 4배 촘촘한 샘플링)
+
+### 손 도메인에 맞게 조정한 것 (논문과 다른 지점, 명시)
+- **회전(quaternion/6D) 특징 전부 제외** — 우리 데이터(SHREC, H2O, InterHand2.6M 등)는
+  3D 관절 좌표만 제공하고 회전 정보가 없음. 원 논문의 `d_in=18J+8`, `d_out=9J+4` 대신
+  **위치+속도만 사용**: `d_in = 6J`(위치 3J + 선속도 3J), `d_out = 3J`(위치만).
+- **"루트를 지면에 투영"하는 개념 없음** — 몸은 골반을 지면에 투영해 root를 만들지만,
+  손에는 이런 개념이 없어 **손목을 root 삼아 상대좌표로 정규화**(기존 파이프라인과 동일한 방식).
+- **Relative positional encoding의 정확한 구현 방식은 논문에 상세 공개 안 됨** — 학습 가능한
+  절대 위치 임베딩(learned absolute positional embedding)으로 근사 구현. (논문은 [25]의 방식을
+  따른다고만 언급하고 구체적 수식은 미공개)
+
+
+https://github.com/user-attachments/assets/17d93026-dcd2-470c-8df9-f7a672673f13
+
